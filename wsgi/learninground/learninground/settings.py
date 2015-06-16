@@ -17,14 +17,26 @@ BASE_DIR = os.path.dirname(DJ_PROJECT_DIR)
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!iudke*hi8vo#qyntq5yxm+p2itkuqg-m@bo8o%+cbnq(h%@@-'
+SECRET_KEY = os.environ['LR_SECRET_KEY']
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+ON_OPENSHIFT = False
+if os.environ.has_key('OPENSHIFT_REPO_DIR'):
+    ON_OPENSHIFT = True
+
+PROJECT_DIR = os.path.dirname(os.path.realpath(__file__))
+if ON_OPENSHIFT:
+    DEBUG = bool(os.environ.get('DEBUG', False))
+    if DEBUG:
+        print("WARNING: The DEBUG environment is set to True.")
+else:
+    DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '.learninground.com',
+    '.rhcloud.com',
+]
 
 
 # Application definition
@@ -36,6 +48,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'raven.contrib.django.raven_compat',
+    'readingtracker',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -57,13 +71,25 @@ WSGI_APPLICATION = 'learninground.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        # GETTING-STARTED: change 'db.sqlite3' to your sqlite3 database:
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if ON_OPENSHIFT:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+            'NAME': os.environ['OPENSHIFT_APP_NAME'],               # Or path to database file if using sqlite3.
+            'USER': os.environ['OPENSHIFT_POSTGRESQL_DB_USERNAME'],               # Not used with sqlite3.
+            'PASSWORD': os.environ['OPENSHIFT_POSTGRESQL_DB_PASSWORD'],         # Not used with sqlite3.
+            'HOST': os.environ['OPENSHIFT_POSTGRESQL_DB_HOST'],               # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': os.environ['OPENSHIFT_POSTGRESQL_DB_PORT'],               # Set to empty string for default. Not used with sqlite3.
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            # GETTING-STARTED: change 'db.sqlite3' to your sqlite3 database:
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -84,3 +110,21 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static')
+
+TEMPLATE_DIRS = (
+    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(PROJECT_DIR, '../templates'),
+)
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'staticfiles'),
+)
+
+LOGIN_URL = '/login/'
+
+SENTRY_HASH = os.environ['LR_SENTRY_HASH']
+SENTRY_FIVE_DIGIT = os.environ['LR_SENTRY_FIVE_DIGIT']
+RAVEN_CONFIG = { 'dsn': 'https://%s@app.getsentry.com/%s' % (SENTRY_HASH, SENTRY_FIVE_DIGIT), }
+
