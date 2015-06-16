@@ -2,8 +2,8 @@
 import hashlib, imp, os, sqlite3
 
 # Load the OpenShift helper library
-# GETTING-STARTED: change 'myproject' to your project name:
-lib_path      = os.environ['OPENSHIFT_REPO_DIR'] + 'wsgi/myproject/'
+# GETTING-STARTED: change 'learninground' to your project name:
+lib_path      = os.environ['OPENSHIFT_REPO_DIR'] + 'wsgi/learninground/'
 modinfo       = imp.find_module('openshiftlibs', [lib_path])
 openshiftlibs = imp.load_module('openshiftlibs', modinfo[0], modinfo[1], modinfo[2])
 
