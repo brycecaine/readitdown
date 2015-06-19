@@ -49,6 +49,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'raven.contrib.django.raven_compat',
+    'rest_framework',
+    'default',
     'readingtracker',
 )
 
@@ -128,3 +130,12 @@ SENTRY_HASH = os.environ['LR_SENTRY_HASH']
 SENTRY_FIVE_DIGIT = os.environ['LR_SENTRY_FIVE_DIGIT']
 RAVEN_CONFIG = { 'dsn': 'https://%s@app.getsentry.com/%s' % (SENTRY_HASH, SENTRY_FIVE_DIGIT), }
 
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+	#'rest_framework.permissions.IsAdminUser'
+    ),
+    'PAGE_SIZE': 10
+}
