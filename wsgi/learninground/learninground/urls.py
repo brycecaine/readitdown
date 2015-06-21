@@ -11,8 +11,9 @@ router.register(r'entries', views.EntryViewSet)
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = patterns('',
-    url(r'^', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^$', views.HomeView.as_view(), name='home'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api-token-auth/', 'rest_framework.authtoken.views.obtain_auth_token'),
+    url(r'^$', views.HomeView.as_view(), name='home'),
 )

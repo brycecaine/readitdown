@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'raven.contrib.django.raven_compat',
     'rest_framework',
+    'rest_framework.authtoken',
     'default',
     'readingtracker',
 )
@@ -136,6 +137,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
 	#'rest_framework.permissions.IsAdminUser'
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
     ),
     'PAGE_SIZE': 10
 }
