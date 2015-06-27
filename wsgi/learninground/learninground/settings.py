@@ -131,17 +131,3 @@ LOGIN_URL = '/login/'
 SENTRY_HASH = os.environ['LR_SENTRY_HASH']
 SENTRY_FIVE_DIGIT = os.environ['LR_SENTRY_FIVE_DIGIT']
 RAVEN_CONFIG = { 'dsn': 'https://%s@app.getsentry.com/%s' % (SENTRY_HASH, SENTRY_FIVE_DIGIT), }
-
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-	#'rest_framework.permissions.IsAdminUser'
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ),
-    'PAGE_SIZE': 10
-}
