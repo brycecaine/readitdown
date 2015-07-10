@@ -8,3 +8,6 @@ class Entry(models.Model):
     minutes = models.IntegerField()
     pages = models.IntegerField(null=True, blank=True)
     book = models.CharField(max_length=255, null=True, blank=True)
+
+    def __unicode__(self):
+        return '%s - %s - %s' % (self.date, self.minutes, self.pages)

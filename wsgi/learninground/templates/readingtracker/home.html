@@ -1,1 +1,100 @@
-read
+{% extends "base.html" %}
+
+{% block content %}
+    <h3>Reading Tracker</h3>
+    <button id="minDate-previous" style="margin-bottom: 10px;" class="btn"><i class="icon icon-chevron-left"></i></button>
+    <button id="minDate-rewind" style="margin-bottom: 10px;" class="btn"><i class="icon icon-chevron-up"></i></button>
+    <button id="minDate-next" style="margin-bottom: 10px;" class="btn"><i class="icon icon-chevron-right"></i></button>
+    <div id="cal-heatmap"></div>
+    <form action="" method="post">{% csrf_token %}
+        <div id="date-label"></div>
+        {{ form.date.as_hidden }}
+        {{ form.minutes }}
+        {{ form.pages }}
+        <input type="submit" value="Submit" class="form-control" />
+    </form>
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            var entry_data = {{ entry_data|safe }};
+            var parser = function(data) {
+                var stats = {};
+                for (var d in data) {
+                    date_seconds = Date.parse(data[d].date) / 1000;
+                    stats[date_seconds] = data[d].minutes;
+                }
+                console.log(stats);
+                return stats;
+            };
+
+            var cal = new CalHeatMap();
+            cal.init({
+                cellSize: 50,
+                range: 1,
+                domain: "month",
+                subDomain: "x_day",
+                subDomainTextFormat: "%d",
+                label: {position: 'top', height: 50},
+                displayLegend: false,
+                data: entry_data,
+                afterLoadData: parser,
+                onClick: function(date, value) {
+                    $('#id_date').val(date);
+                    $('#id_minutes').val(value);
+
+                    for (var i = 0; i < entry_data.length; i++) {
+                        var entry_date = new Date(Date.parse(entry_data[i]['date']));
+                        if (date.valueOf() === entry_date.valueOf()) {
+                            var pages = entry_data[i]['pages'];
+                            $('#id_pages').val(pages);
+                        }
+                    }
+
+                    $('#date-label').html(date);
+                }
+            });
+
+            $("#minDate-previous").on("click", function(e) {
+                e.preventDefault();
+                if (!cal.previous()) {
+                    alert("No more domains to load");
+                }
+            });
+
+            $("#minDate-next").on("click", function(e) {
+                e.preventDefault();
+                if (!cal.next()) {
+                    alert("No more domains to load");
+                }
+            });
+
+            $("#minDate-rewind").on("click", function(e) {
+                e.preventDefault();
+                cal.rewind();
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css" />
+    <link rel="stylesheet" href="https://rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css" />
+    <style>
+        .graph-label {
+            font-size: 200%;
+        }
+
+        .subdomain-text {
+            font-size: 200%;
+            fill: #fff;
+        }
+    </style>
+{% endblock %}
