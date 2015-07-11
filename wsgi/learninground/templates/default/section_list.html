@@ -1,0 +1,8 @@
+<h1>Sections</h1>
+<ul>
+    {% for section in object_list %}
+        <li>{{ section }}</li>
+        {% empty %}
+            <li>No sections yet.</li>
+            {% endfor %}
+        </ul>
