@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User, Group
 from django.db.models import Q
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
-from default.models import Friendship
+from django.views.generic.list import ListView
+from default.models import Friendship, Section
 from readingtracker import service
 from readingtracker.forms import EntryForm
 from readingtracker.models import Entry
@@ -50,3 +52,32 @@ class HomeView(FormView):
             entry = Entry.objects.create(user=user, date=date, minutes=minutes, pages=pages)
 
         return super(HomeView, self).form_valid(form)
+
+class SectionsView(ListView):
+    model = Section
+
+    def get_context_data(self, **kwargs):
+        context = super(SectionsView, self).get_context_data(**kwargs)
+        user = self.request.user
+
+        sections = service.get_sections(user.username)
+        print sections
+        context['object_list'] = sections
+
+        return context
+
+class MonitorView(TemplateView):
+    template_name = 'readingtracker/monitor.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MonitorView, self).get_context_data(**kwargs)
+        user = self.request.user
+        section_id = kwargs.get('section_id')
+        section = Section.objects.get(id=section_id)
+        table_data = service.get_section_entries(section, 2015, 7)
+        context['columns'] = json.dumps(table_data['columns'])
+        context['data'] = json.dumps(table_data['data'])
+
+        print context
+
+        return context
