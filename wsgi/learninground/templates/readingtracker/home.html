@@ -1,18 +1,58 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h3>Reading Tracker</h3>
-    <button id="minDate-previous" style="margin-bottom: 10px;" class="btn"><i class="icon icon-chevron-left"></i></button>
-    <button id="minDate-rewind" style="margin-bottom: 10px;" class="btn"><i class="icon icon-chevron-up"></i></button>
-    <button id="minDate-next" style="margin-bottom: 10px;" class="btn"><i class="icon icon-chevron-right"></i></button>
-    <div id="cal-heatmap"></div>
-    <form action="" method="post">{% csrf_token %}
-        <div id="date-label"></div>
-        {{ form.date.as_hidden }}
-        {{ form.minutes }}
-        {{ form.pages }}
-        <input type="submit" value="Submit" class="form-control" />
-    </form>
+    <div class="row-fluid">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-6">
+            <div id="cal-heatmap"></div>
+            <div class="text-center padded">
+                <button id="minDate-previous" class="btn btn-default"><i class="icon icon-chevron-left"></i></button>
+                <button id="minDate-rewind" class="btn btn-default">Today</button>
+                <button id="minDate-next" class="btn btn-default"><i class="icon icon-chevron-right"></i></button>
+            </div>
+
+            <form action="" method="post">{% csrf_token %}
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label>Date</label>
+                        {{ form.date }}
+                        <div class="form-group has-error">
+                            {% for error in form.date.errors %}
+                                <label class="control-label"><strong>{{ error }}</strong></label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Minutes</label>
+                        {{ form.minutes }}
+                        <div class="form-group has-error">
+                            {% for error in form.minutes.errors %}
+                                <label class="control-label"><strong>{{ error }}</strong></label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Pages</label>
+                        {{ form.pages }}
+                        <div class="form-group has-error">
+                            {% for error in form.pages.errors %}
+                                <label class="control-label"><strong>{{ error }}</strong></label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-sm-4" style="white-space: nowrap;">
+                        <label></label><br />
+                        <button class="btn btn-default">Cancel</button>
+                        <input type="submit" value="Submit" class="btn btn-primary">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="col-md-3">
+        </div>
+    </div>
 {% endblock %}
 
 {% block script %}
@@ -38,17 +78,27 @@
             cal.init({
                 cellSize: 50,
                 range: 1,
+                weekStartOnMonday: false,
                 domain: "month",
                 subDomain: "x_day",
                 subDomainTextFormat: "%d",
                 label: {position: 'top', height: 50},
                 displayLegend: false,
+                subDomainTitleFormat: {
+                    empty: '{date}',
+                    filled: '{date}: {count}'
+                },
+                subDomainDateFormat: function(date) {
+                    return moment(date).format('M/D/YYYY');
+                },
                 data: entry_data,
                 afterLoadData: parser,
                 onClick: function(date, value) {
-                    $('#id_date').val(date);
+                    date_str = moment(date).format('M/D/YYYY');
+                    $('#id_date').val(date_str);
                     $('#id_minutes').val(value);
 
+                    $('#id_pages').val('');
                     for (var i = 0; i < entry_data.length; i++) {
                         var entry_date = new Date(Date.parse(entry_data[i]['date']));
                         if (date.valueOf() === entry_date.valueOf()) {
@@ -95,6 +145,20 @@
         .subdomain-text {
             font-size: 200%;
             fill: #fff;
+        }
+
+        .cal-heatmap-container {
+            float: none;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .thin-padding-left {
+            padding-left: 1px;
+        }
+
+        .thin-padding-right {
+            padding-right: 1px;
         }
     </style>
 {% endblock %}

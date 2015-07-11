@@ -40,6 +40,13 @@ class HomeView(FormView):
         pages = form.cleaned_data.get('pages')
 
         # Create entry
-        entry = Entry.objects.create(user=user, date=date, minutes=minutes, pages=pages)
+
+        try:
+            entry = Entry.objects.get(user=user, date=date)
+            entry.minutes = minutes
+            entry.pages = pages
+            entry.save()
+        except Entry.DoesNotExist:
+            entry = Entry.objects.create(user=user, date=date, minutes=minutes, pages=pages)
 
         return super(HomeView, self).form_valid(form)

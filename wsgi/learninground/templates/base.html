@@ -11,6 +11,11 @@
         <!-- Styling ------------------------------------------------------ -->
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
         <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+        <style>
+            .padded {
+                padding: 15px;
+            }
+        </style>
         {% block style %}{% endblock %}
         <!-- -------------------------------------------------------------- -->
     </head>
@@ -42,7 +47,9 @@
             </div>
         </nav>
 
-        {% block content %}{% endblock %}
+        <div class="container-fluid">
+            {% block content %}{% endblock %}
+        </div>
         
         <div class="row">
             <div class="col-lg-12">
