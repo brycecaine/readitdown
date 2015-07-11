@@ -54,7 +54,5 @@ def get_section_entries(section, year, month):
 
 def get_students(section):
     students = User.objects.filter(usersection__section=section)
-    print 'students'
-    print students
 
     return students
