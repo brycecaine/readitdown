@@ -29,7 +29,6 @@ class HomeView(FormView):
         user = self.request.user
 
         entry_data = service.get_entry_data(user.username)
-        print entry_data
         context['entry_data'] = json.dumps(entry_data)
 
         return context
@@ -61,7 +60,6 @@ class SectionsView(ListView):
         user = self.request.user
 
         sections = service.get_sections(user.username)
-        print sections
         context['object_list'] = sections
 
         return context
@@ -77,7 +75,5 @@ class MonitorView(TemplateView):
         table_data = service.get_section_entries(section, 2015, 7)
         context['columns'] = json.dumps(table_data['columns'])
         context['data'] = json.dumps(table_data['data'])
-
-        print context
 
         return context
