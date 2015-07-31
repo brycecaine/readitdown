@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row-fluid">
+        <div class="col-md-12">
+            <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+                {{ form }}
+                <div class="col-sm-4" style="white-space: nowrap;">
+                    <label></label><br />
+                    <button class="btn btn-default">Cancel</button>
+                    <input type="submit" value="Submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
