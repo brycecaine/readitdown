@@ -15,19 +15,13 @@ class AddUsersView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(AddUsersView, self).get_context_data(**kwargs)
-        print 'context'
-        # print context['form'].fields
-        # print context['form'].fields['file']
-        # print context['form'].fields['file'].__dict__
 
         return context
 
     def form_valid(self, form):
-        print 'valid form'
         role = form.cleaned_data.get('role', 'student')
         file = self.request.FILES['file']
         content_type = self.request.FILES['file'].content_type
-        print file
 
         # ---------------------------------------------------------------------
         # There needs to be some validation here so the right parsing can
@@ -42,7 +36,7 @@ class AddUsersView(FormView):
                 user = service.create_user(email, role)
                 row.pop(0)
                 for guardian_email in row:
-                    guardian = service.create_guardian(user, guardian_email)
+                    guardian = service.create_user(guardian_email, 'guardian', user)
 
             file.close()
 
@@ -57,7 +51,7 @@ class AddUsersView(FormView):
                 row.pop(0)
                 for cell in row:
                     guardian_email = cell.value
-                    guardian = service.create_guardian(user, guardian_email)
+                    guardian = service.create_user(guardian_email, 'guardian', user)
 
         else:
             print 'invalid file'
