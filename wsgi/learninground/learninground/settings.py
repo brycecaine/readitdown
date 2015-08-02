@@ -48,10 +48,12 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'raven.contrib.django.raven_compat',
     'rest_framework',
     'rest_framework.authtoken',
     'sslserver',
+    'registration',
     'default',
     'readingtracker',
 )
@@ -131,3 +133,16 @@ LOGIN_URL = '/login/'
 SENTRY_HASH = os.environ['LR_SENTRY_HASH']
 SENTRY_FIVE_DIGIT = os.environ['LR_SENTRY_FIVE_DIGIT']
 RAVEN_CONFIG = { 'dsn': 'https://%s@app.getsentry.com/%s' % (SENTRY_HASH, SENTRY_FIVE_DIGIT), }
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'learntreadcom'
+EMAIL_HOST_PASSWORD = 'vols3131'
+DEFAULT_FROM_EMAIL = 'learntreadcom@gmail.com'
+
+ACCOUNT_ACTIVATION_DAYS = 250
+REGISTRATION_DEFAULT_FROM_EMAIL = 'learntreadcom@gmail.com'
+REGISTRATION_AUTO_LOGIN = True
+
+SITE_ID = 1
