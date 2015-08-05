@@ -1,5 +1,6 @@
 from default import service
 from default.forms import AddUsersForm
+from django.contrib import messages
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 import csv
@@ -15,11 +16,19 @@ class AddUsersView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(AddUsersView, self).get_context_data(**kwargs)
+        context['user'] = self.request.user
 
         return context
 
     def form_valid(self, form):
-        role = form.cleaned_data.get('role', 'student')
+        context = self.get_context_data()
+        user = context.get('user')
+
+        group_to_assign = form.cleaned_data.get('group', 'student')
+        # Only administrators can create teacher accounts
+        if service.is_manager(user) and group_to_assign == 'teacher':
+            group_to_assign = 'student'
+
         file = self.request.FILES['file']
         content_type = self.request.FILES['file'].content_type
 
@@ -31,29 +40,70 @@ class AddUsersView(FormView):
         # Handle CSVs
         if content_type == 'text/csv':
             reader = csv.reader(file)
+            header_row = reader.next()
             for row in reader:
-                email = row[0]
-                user = service.create_user(email, role)
-                row.pop(0)
-                for guardian_email in row:
-                    guardian = service.create_user(guardian_email, 'guardian', user)
+                user_data = {
+                    'email': row[0],
+                    'first_name': row[1],
+                    'last_name': row[2],
+                    'group_name': group_to_assign
+                }
+
+                new_user = service.create_user(**user_data)
+                
+                if service.is_teacher(user):
+                    friendship = service.create_friendship(new_user, user, True, 'teacher')
+
+                for guardian_email in row[3:]:
+                    guardian_data = {
+                        'email': guardian_email,
+                        'group_name': 'guardian'
+                    }
+                    guardian = service.create_user(**guardian_data)
+                    friendship = service.create_friendship(new_user, guardian, True, 'guardian')
 
             file.close()
+
+            messages.success(self.request, 'Import successful')
 
         # Handle Excel files
         elif content_type in ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'):
             workbook = xlrd.open_workbook(filename=None, file_contents=file.read())
             sh = workbook.sheet_by_index(0)
-            for rx in range(sh.nrows):
+            for rx in range(sh.nrows)[1:]:
                 row = sh.row(rx)
-                email = row[0].value
-                user = service.create_user(email, role)
-                row.pop(0)
-                for cell in row:
+                user_data = {
+                    'email': row[0].value,
+                    'first_name': row[1].value,
+                    'last_name': row[2].value,
+                    'group_name': group_to_assign
+                }
+
+                print user_data
+                new_user = service.create_user(**user_data)
+
+                if service.is_teacher(user):
+                    friendship = service.create_friendship(new_user, user, True, 'teacher')
+
+                for cell in row[3:]:
                     guardian_email = cell.value
-                    guardian = service.create_user(guardian_email, 'guardian', user)
+                    guardian_data = {
+                        'email': guardian_email,
+                        'group_name': 'guardian'
+                    }
+                    print guardian_data
+                    guardian = service.create_user(**guardian_data)
+                    friendship = service.create_friendship(new_user, guardian, True, 'guardian')
+
+            messages.success(self.request, 'Import successful')
 
         else:
-            print 'invalid file'
+            messages.error(self.request, 'Import failed')
 
         return super(AddUsersView, self).form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super(AddUsersView, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+
+        return kwargs
