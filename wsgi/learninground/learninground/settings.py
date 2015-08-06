@@ -54,7 +54,8 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'sslserver',
     'registration',
-    'default',
+    'main',
+    'access',
     'readingtracker',
 )
 

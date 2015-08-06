@@ -1,16 +1,13 @@
-from default import service
-from default.forms import AddUsersForm
+from access import service as access_service
+from access.forms import AddUsersForm
 from django.contrib import messages
-from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from main import service as main_service
 import csv
 import xlrd
 
-class HomeView(TemplateView):
-    template_name = 'default/home.html'
-
 class AddUsersView(FormView):
-    template_name = 'default/add_users.html'
+    template_name = 'access/add_users.html'
     form_class = AddUsersForm
     success_url = '/'
 
@@ -26,7 +23,7 @@ class AddUsersView(FormView):
 
         group_to_assign = form.cleaned_data.get('group', 'student')
         # Only administrators can create teacher accounts
-        if service.is_manager(user) and group_to_assign == 'teacher':
+        if access_service.is_manager(user) and group_to_assign == 'teacher':
             group_to_assign = 'student'
 
         file = self.request.FILES['file']
@@ -49,18 +46,18 @@ class AddUsersView(FormView):
                     'group_name': group_to_assign
                 }
 
-                new_user = service.create_user(**user_data)
+                new_user = access_service.create_user(**user_data)
                 
-                if service.is_teacher(user):
-                    friendship = service.create_friendship(new_user, user, True, 'teacher')
+                if access_service.is_teacher(user):
+                    friendship = main_service.create_friendship(new_user, user, True, 'teacher')
 
                 for guardian_email in row[3:]:
                     guardian_data = {
                         'email': guardian_email,
                         'group_name': 'guardian'
                     }
-                    guardian = service.create_user(**guardian_data)
-                    friendship = service.create_friendship(new_user, guardian, True, 'guardian')
+                    guardian = access_service.create_user(**guardian_data)
+                    friendship = main_service.create_friendship(new_user, guardian, True, 'guardian')
 
             file.close()
 
@@ -80,10 +77,10 @@ class AddUsersView(FormView):
                 }
 
                 print user_data
-                new_user = service.create_user(**user_data)
+                new_user = access_service.create_user(**user_data)
 
-                if service.is_teacher(user):
-                    friendship = service.create_friendship(new_user, user, True, 'teacher')
+                if access_service.is_teacher(user):
+                    friendship = main_service.create_friendship(new_user, user, True, 'teacher')
 
                 for cell in row[3:]:
                     guardian_email = cell.value
@@ -92,8 +89,8 @@ class AddUsersView(FormView):
                         'group_name': 'guardian'
                     }
                     print guardian_data
-                    guardian = service.create_user(**guardian_data)
-                    friendship = service.create_friendship(new_user, guardian, True, 'guardian')
+                    guardian = access_service.create_user(**guardian_data)
+                    friendship = main_service.create_friendship(new_user, guardian, True, 'guardian')
 
             messages.success(self.request, 'Import successful')
 
@@ -107,3 +104,4 @@ class AddUsersView(FormView):
         kwargs.update({'user': self.request.user})
 
         return kwargs
+

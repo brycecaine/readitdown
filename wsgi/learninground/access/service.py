@@ -1,4 +1,3 @@
-from default.models import Friendship
 from django.contrib.auth.models import User, Group
 from django.contrib.sites.models import Site
 from django.db import IntegrityError
@@ -36,16 +35,8 @@ def create_user(email, first_name=None, last_name=None, group_name=None):
 
     return user
 
-def create_friendship(user, friend, active, friend_type):
-    friendship = None
-    if friend:
-        friendship, created = Friendship.objects.get_or_create(user=user,
-            friend=friend, friend_type=friend_type, active=True)
-
-    return friendship
-
 def is_manager(user):
-    return user.groups.filter(name='Manager').exists()
+    return user.groups.filter(name='manager').exists()
 
 def is_teacher(user):
-    return user.groups.filter(name='Teacher').exists()
+    return user.groups.filter(name='teacher').exists()

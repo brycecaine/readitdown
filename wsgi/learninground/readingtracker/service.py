@@ -1,6 +1,5 @@
 from calendar import monthrange
 from datetime import date, datetime
-from default.models import Section
 from django.contrib.auth.models import User
 from readingtracker.models import Entry
 import time
@@ -23,13 +22,7 @@ def get_entry_data(username):
 
     return entry_data
 
-def get_sections(username):
-    user = User.objects.get(username=username)
-    sections = Section.objects.filter(teacher=user)
-
-    return sections
-
-def get_section_entries(section, year, month):
+def get_friend_entries(user, year, month):
     # Get date range
     days = range(1, monthrange(year, month)[1] + 1)
     date_list = []
@@ -38,7 +31,7 @@ def get_section_entries(section, year, month):
         date_list.append(date(year, month, day))
         columns.append({'title': day})
 
-    students = get_students(section)
+    students = user.friends_to.all()
     data = []
     for student in students:
         student_data = [student.username]
@@ -51,8 +44,3 @@ def get_section_entries(section, year, month):
         data.append(student_data)
 
     return {'columns': columns, 'data': data}
-
-def get_students(section):
-    students = User.objects.filter(usersection__section=section)
-
-    return students
