@@ -1,0 +1,96 @@
+{% extends "email_base.html" %}
+
+{% block content %}
+    <div style="max-width: 680px;">
+        <div class="col-lg-12">
+            <div class="container">
+                <p style="box-sizing: border-box;
+                color: rgb(51, 51, 51);
+                display: block;
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                font-size: 21px;
+                font-weight: 300;
+                line-height: 29.3999996185303px;
+                margin-left: 0px;
+                margin-right: 0px;
+                margin-top: 0px;
+                text-align: center;
+                ">Welcome to {{ site.name }}!</p>
+                <p style="text-align: center;">
+                    <a style="-webkit-appearance: none;
+                    -webkit-user-select: none;
+                    text-decoration: none;
+                    align-items: flex-start;
+                    background-color: rgb(51, 122, 183);
+                    background-image: none;
+                    border-bottom-color: rgb(46, 109, 164);
+                    border-bottom-left-radius: 6px;
+                    border-bottom-right-radius: 6px;
+                    border-bottom-style: solid;
+                    border-bottom-width: 1px;
+                    border-image-outset: 0px;
+                    border-image-repeat: stretch;
+                    border-image-slice: 100%;
+                    border-image-source: none;
+                    border-image-width: 1;
+                    border-left-color: rgb(46, 109, 164);
+                    border-left-style: solid;
+                    border-left-width: 1px;
+                    border-right-color: rgb(46, 109, 164);
+                    border-right-style: solid;
+                    border-right-width: 1px;
+                    border-top-color: rgb(46, 109, 164);
+                    border-top-left-radius: 6px;
+                    border-top-right-radius: 6px;
+                    border-top-style: solid;
+                    border-top-width: 1px;
+                    box-sizing: border-box;
+                    color: rgb(255, 255, 255);
+                    cursor: pointer;
+                    display: inline-block;
+                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                    font-size: 18px;
+                    font-stretch: normal;
+                    font-style: normal;
+                    font-variant: normal;
+                    font-weight: normal;
+                    height: 24px;
+                    letter-spacing: normal;
+                    line-height: 24px;
+                    margin-bottom: 0px;
+                    margin-left: 0px;
+                    margin-right: 0px;
+                    margin-top: 0px;
+                    overflow-x: visible;
+                    overflow-y: visible;
+                    padding-bottom: 10px;
+                    padding-left: 16px;
+                    padding-right: 16px;
+                    padding-top: 10px;
+                    text-align: center;
+                    text-indent: 0px;
+                    text-rendering: auto;
+                    text-shadow: none;
+                    text-transform: none;
+                    touch-action: manipulation;
+                    vertical-align: middle;
+                    white-space: nowrap;
+                    word-spacing: 0px;
+                    writing-mode: lr-tb;
+                    -webkit-writing-mode: horizontal-tb;"
+                    href="{{ site.domain }}/accounts/activate/{{ activation_key }}/">Activate your account</a>
+                </p>
+                <br />
+                <p>Dear {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %},</p>
+                <p>We're excited to have you join the reading fun!</p>
+                <p>
+                    Best,<br />
+                    {{ site.name }}<br />
+                    <br />
+                    P.S. You have {{ expiration_days }} days to activate your account before this email expires.<br />
+                    P.P.S. If you did not register with {{ site.name }}, you can safely ignore this email.<br />
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

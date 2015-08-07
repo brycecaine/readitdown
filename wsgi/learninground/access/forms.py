@@ -18,3 +18,5 @@ class AddUsersForm(forms.Form):
                     ('student', 'Student'),
                 )
             self.fields['role'] = forms.ChoiceField(choices=groups)
+
+        self.fields['role'].widget.attrs['class'] = 'form-control'

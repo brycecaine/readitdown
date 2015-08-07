@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <p class="lead text-center">Welcome, please register</p>
+    <form method="post" action="">
+        <div class="row">
+            <div class="col-lg-6">
+                {% csrf_token %}
+                <p class="required">
+                    <label class="required" for="id_username">Username</label>
+                    <input id="id_username" maxlength="30" name="username" type="text" class="form-control">
+                </p>
+            </div>
+            <div class="col-lg-6">
+                <p class="required">
+                    <label class="required" for="id_email">E-mail</label>
+                    <input id="id_email" name="email" type="email" class="form-control">
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <p class="required">
+                    <label class="required" for="id_password1">Password</label>
+                    <input id="id_password1" name="password1" type="password" class="form-control">
+                </p>
+            </div>
+            <div class="col-lg-6">
+                <p class="required">
+                    <label class="required" for="id_password2">Password confirmation</label>
+                    <input id="id_password2" name="password2" type="password" class="form-control">
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="pull-right">
+                    <a href="/" class="btn btn-default">Cancel</a>
+                    <input type="submit" value="Submit" class="btn btn-primary">
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

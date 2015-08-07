@@ -1,6 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-    welcome to learning round
+    <p class="text-center splash">Welcome to Learning Round!</p>
+    <div>
+        <p class="lead text-center subsplash">
+            Pick a book, read a lot, and ...<br />
+            <br />
+            <a href="/reading" class="btn btn-primary btn-xlarge">Track your minutes</a>
+            {% if not user.is_authenticated %}
+                <br />
+                <br /><a href="/accounts/register" class="btn btn-info btn-lg">Register</a>
+            {% endif %}
+        </p>
+    </div>
 {% endblock %}
 
+{% block style %}
+    <style>
+        .splash {
+            margin: 50px;
+            font-size: 500%;
+        }
+
+        .subsplash {
+            margin: 30px;
+            font-size: 300%;
+        }
+
+        .btn-xlarge {
+            padding: 18px 28px;
+            font-size: 22px;
+            line-height: normal;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+        }
+    </style>
+{% endblock %}

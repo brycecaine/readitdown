@@ -1,16 +1,90 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="row-fluid">
-        <div class="col-md-12">
+    <div class="container">
+        <p class="lead text-center">Add Users</p>
             <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
-                {{ form }}
-                <div class="col-sm-4" style="white-space: nowrap;">
-                    <label></label><br />
-                    <button class="btn btn-default">Cancel</button>
-                    <input type="submit" value="Submit" class="btn btn-primary">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <p class="required">
+                            {{ form.role.label }}
+                        </p>
+                        {{ form.role }}
+                    </div>
+                    <div class="col-lg-6">
+                        <p class="required">
+                            {{ form.file.label }}
+                        </p>
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-primary btn-file">
+                                    Browse… <input id="id_file" name="file" type="file">
+                                </span>
+                            </span>
+                            <input id="filename" type="text" class="form-control" readonly="">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="pull-right margin-top-10">
+                            <a href="/" class="btn btn-default">Cancel</a>
+                            <input type="submit" value="Submit" class="btn btn-primary">
+                        </div>
+                    </div>
                 </div>
             </form>
-        </div>
+        </p>
     </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // http://goo.gl/s7UfAm
+        $(document).on('change', '.btn-file :file', function() {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+        });
+
+        $(document).ready( function() {
+            $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+                $('#filename').val(label);
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block style %}
+    <style>
+        .btn-file {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
+        .required {
+            display: inline-block;
+            max-width: 100%;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        .margin-top-10 {
+            margin-top: 10px;
+        }
+    </style>
 {% endblock %}

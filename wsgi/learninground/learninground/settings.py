@@ -131,7 +131,8 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'staticfiles'),
 )
 
-LOGIN_URL = '/login/'
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
 
 SENTRY_HASH = os.environ['LR_SENTRY_HASH']
 SENTRY_FIVE_DIGIT = os.environ['LR_SENTRY_FIVE_DIGIT']
@@ -147,5 +148,6 @@ DEFAULT_FROM_EMAIL = 'learntreadcom@gmail.com'
 ACCOUNT_ACTIVATION_DAYS = 250
 REGISTRATION_DEFAULT_FROM_EMAIL = 'learntreadcom@gmail.com'
 REGISTRATION_AUTO_LOGIN = True
+REGISTRATION_EMAIL_HTML = True
 
 SITE_ID = 1
