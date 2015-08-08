@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="row-fluid">
-        <div class="col-md-3">
-        </div>
+    <div class="row">
         <div class="col-md-6">
             <div id="cal-heatmap"></div>
             <div class="text-center padded">
@@ -11,7 +9,6 @@
                 <button id="minDate-rewind" class="btn btn-default">Today</button>
                 <button id="minDate-next" class="btn btn-default"><i class="icon icon-chevron-right"></i></button>
             </div>
-
             <form action="" method="post">{% csrf_token %}
                 <div class="row">
                     <div class="col-sm-4">
@@ -47,12 +44,41 @@
                         <input type="submit" value="Submit" class="btn btn-primary">
                     </div>
                 </div>
-
             </form>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
+            <div>
+                <p class="text-center tally-label">Tally</p>
+                <table class="table grey">
+                    <thead>
+                        <tr>
+                            <th class="lead"><strong>Period</strong></th>
+                            <th class="lead"><strong>Minutes</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="lead">Week <span id="week-val"></span></td>
+                            <td class="lead" id="week-mins"></td>
+                        </tr>
+                        <tr>
+                            <td class="lead">Month <span id="month-val"></span></td>
+                            <td class="lead" id="month-mins"></td>
+                        </tr>
+                        <tr>
+                            <td class="lead">Year <span id="year-val"></span></td>
+                            <td class="lead" id="year-mins"></td>
+                        </tr>
+                        <tr>
+                            <td class="lead">Total</td>
+                            <td class="lead" id="total-mins"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
 {% endblock %}
 
 {% block script %}
@@ -72,6 +98,101 @@
                 }
                 return stats;
             };
+
+            function addMonths(dateObj, num) {
+                var currentMonth = dateObj.getMonth();
+                dateObj.setMonth(dateObj.getMonth() + num)
+
+                if (dateObj.getMonth() != ((currentMonth + num) % 12)){
+                    dateObj.setDate(0);
+                }
+                return dateObj;
+            }
+
+            var get_month = function(cal, num_months) {
+                var date_list = cal.root[0][0].textContent.split('/');
+                var year = date_list[2].substring(0, 4);
+                var month = date_list[0] - 1;
+                var day = date_list[1];
+                var date_pre_click = new Date(year, month, day);
+                var date = addMonths(date_pre_click, num_months);
+
+                return date;
+            }
+
+            var render_vals = function(date, entry_data) {
+                console.log(date);
+                date_mom = moment(date);
+
+                // ------------------------------------------------------------
+                // Update summary labels
+
+                // Get first-of-week string
+                var fow_mom = date_mom.startOf('week');
+                var eow_mom = date_mom.endOf('week');
+                var fow_date = fow_mom._d;
+                var eow_date = eow_mom._d;
+                var week_val = 'of ' + moment(fow_date).format('MMMM D, YYYY');
+
+                // Get month string
+                var month_val = 'of ' + date_mom.format('MMMM YYYY');
+
+                // Get year string
+                var year_val = 'of ' + date_mom.format('YYYY');
+
+                $('#week-val').text(week_val);
+                $('#month-val').text(month_val);
+                $('#year-val').text(year_val);
+
+                // ------------------------------------------------------------
+                // Update summary amounts
+                var week_mins;
+                var month_mins;
+                var year_mins;
+                var total_mins;
+                var week_pages;
+                var month_pages;
+                var year_pages;
+                var total_pages;
+
+                console.log(1);
+                console.log(entry_data);
+
+                for (var i = 0; i < entry_data.length; i++) {
+                    console.log(2);
+                    var entry_date = new Date(Date.parse(entry_data[i]['date']));
+
+
+                    var entry_date_mom = moment(entry_date);
+                    console.log(entry_date_mom);
+                    console.log(fow_mom);
+                    console.log(eow_mom);
+                    if (entry_date_mom.isBetween(fow_mom, eow_mom)) {
+                        console.log(2.5);
+                        week_mins += entry_data[i]['minutes'];
+                        week_pages += entry_data[i]['pages'];
+                    }
+
+                    if (date.getMonth() == entry_date.getMonth()) {
+                        month_mins += entry_data[i]['minutes'];
+                        month_pages += entry_data[i]['pages'];
+                    }
+
+                    if (date.getYear() == entry_date.getYear()) {
+                        year_mins += entry_data[i]['minutes'];
+                        year_pages += entry_data[i]['pages'];
+                    }
+
+                    total_mins += entry_data[i]['minutes'];
+                    total_pages += entry_data[i]['pages'];
+                }
+
+                console.log(3);
+                $('#week-mins').text(week_mins);
+                $('#month-mins').text(month_mins);
+                $('#year-mins').text(year_mins);
+                $('#total-mins').text(total_mins);
+            }
 
             var cal = new CalHeatMap();
             cal.init({
@@ -107,10 +228,16 @@
                     }
 
                     $('#date-label').html(date);
+                    console.log('clicked');
+                    console.log(entry_data);
+                    render_vals(date, entry_data);
                 }
             });
 
             $("#minDate-previous").on("click", function(e) {
+                var date = get_month(cal, -1);
+                render_vals(date);
+
                 e.preventDefault();
                 if (!cal.previous()) {
                     alert("No more domains to load");
@@ -118,6 +245,9 @@
             });
 
             $("#minDate-next").on("click", function(e) {
+                var date = get_month(cal, 1);
+                render_vals(date);
+
                 e.preventDefault();
                 if (!cal.next()) {
                     alert("No more domains to load");
@@ -125,6 +255,10 @@
             });
 
             $("#minDate-rewind").on("click", function(e) {
+                var today = new Date();
+                var date = new Date(today.getFullYear(), today.getMonth(), 1);
+                render_vals(date);
+
                 e.preventDefault();
                 cal.rewind();
             });
@@ -141,6 +275,7 @@
     <link rel="stylesheet" href="https://rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css" />
     <style>
         .graph-label {
+            fill: #777;
             font-size: 200%;
         }
 
@@ -161,6 +296,15 @@
 
         .thin-padding-right {
             padding-right: 1px;
+        }
+        .tally-label {
+            display: block;
+            color: #777;
+            font-family: 'Lucida Grande', Lucida, Verdana, sans-serif;
+            font-size: 28px;
+        }
+        .grey {
+            color: #777;
         }
     </style>
 {% endblock %}
