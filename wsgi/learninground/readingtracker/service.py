@@ -22,25 +22,29 @@ def get_entry_data(username):
 
     return entry_data
 
-def get_friend_entries(user, year, month):
+def get_friend_entries(user, friend_type, year, month):
     # Get date range
     days = range(1, monthrange(year, month)[1] + 1)
     date_list = []
     columns = [{'title': 'Name'}]
     for day in days:
         date_list.append(date(year, month, day))
-        columns.append({'title': day})
+        columns.append({'title': day, 'width': '2%', 'orderable': False})
 
-    students = user.friends_to.all()
+    friendships = user.friends_from.filter(friend_type=friend_type, active=True)
     data = []
-    for student in students:
-        student_data = [student.username]
+    for friendship in friendships:
+        friend_name = '%s, %s' % (friendship.user.last_name, friendship.user.first_name)
+        if friend_name == ', ':
+            friend_name = friendship.user.username
+
+        friend_data = [friend_name]
         for entry_date in date_list:
             try:
-                entry = Entry.objects.get(user=student, date=entry_date)
-                student_data.append(entry.minutes)
+                entry = Entry.objects.get(user=friendship.user, date=entry_date)
+                friend_data.append(entry.minutes)
             except Entry.DoesNotExist:
-                student_data.append(0)
-        data.append(student_data)
+                friend_data.append(0)
+        data.append(friend_data)
 
     return {'columns': columns, 'data': data}

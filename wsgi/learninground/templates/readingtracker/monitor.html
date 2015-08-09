@@ -3,10 +3,16 @@
 {% block content %}
     <div class="row-fluid">
         <div class="col-md-12">
-            <table id="report">
-            </table>
-
-            {{ table_data }}
+            <p class="lead text-center">
+                <a href="/reading/monitor/{{ prev_month_year }}/{{ prev_month_month }}" class="btn btn-default">
+                    <
+                </a>
+                {{ period }}
+                <a href="/reading/monitor/{{ next_month_year }}/{{ next_month_month }}" class="btn btn-default">
+                    >
+                </a>
+            </p>
+            <table id="report"></table>
         </div>
     </div>
 {% endblock %}
@@ -14,13 +20,15 @@
 {% block script %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.js"></script>
     <script type="text/javascript">
         $(function(){
             var columns = {{ columns|safe }};
             var data = {{ data|safe }};
             $('#report').dataTable({
                 "columns": columns,
-                "data": data
+                "data": data,
+                "bAutoWidth": false
             });
         });
     </script>
@@ -28,4 +36,14 @@
 
 {% block style %}
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" />
+    <link href="//cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.css" />
+    <style>
+        table.dataTable thead th, table.dataTable thead td {
+            padding: 10px 0px;
+            border-bottom: 1px solid #111;
+        }
+        table.dataTable tbody th, table.dataTable tbody td {
+            padding: 8px 0px;
+        }
+    </style>
 {% endblock %}

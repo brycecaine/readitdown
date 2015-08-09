@@ -1,3 +1,5 @@
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import User, Group
 from django.db.models import Q
 from django.views.generic import TemplateView
@@ -48,8 +50,28 @@ class MonitorView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(MonitorView, self).get_context_data(**kwargs)
         user = self.request.user
-        table_data = service.get_friend_entries(user, 2015, 7)
+        year = int(self.kwargs.get('year', datetime.now().year))
+        month = int(self.kwargs.get('month', datetime.now().month))
+
+        ref_date = date(year, month, 1)
+        period = ref_date.strftime('%B')
+
+        next_month_date = ref_date + relativedelta(months=1)
+        next_month_month = next_month_date.month
+        next_month_year = next_month_date.year
+
+        prev_month_date = ref_date + relativedelta(months=-1)
+        prev_month_month = prev_month_date.month
+        prev_month_year = prev_month_date.year
+
+        table_data = service.get_friend_entries(user, 'teacher', year, month)
+
         context['columns'] = json.dumps(table_data['columns'])
         context['data'] = json.dumps(table_data['data'])
+        context['period'] = '%s %s' % (period, year)
+        context['next_month_month'] = next_month_month
+        context['next_month_year'] = next_month_year
+        context['prev_month_month'] = prev_month_month
+        context['prev_month_year'] = prev_month_year
 
         return context
