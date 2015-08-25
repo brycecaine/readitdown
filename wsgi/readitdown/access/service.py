@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, Group
 from django.contrib.sites.models import Site
 from django.db import IntegrityError
-from learninground import settings
+from readitdown import settings
 from registration.models import RegistrationProfile
 
 def create_user(email, first_name=None, last_name=None, group_name=None):

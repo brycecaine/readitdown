@@ -1,5 +1,5 @@
 """
-Django settings for learninground project.
+Django settings for readitdown project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(DJ_PROJECT_DIR)
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['LR_SECRET_KEY']
+SECRET_KEY = os.environ['RD_SECRET_KEY']
 
 ON_OPENSHIFT = False
 if os.environ.has_key('OPENSHIFT_REPO_DIR'):
@@ -34,7 +34,7 @@ else:
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [
-    '.learninground.com',
+    '.readitdown.com',
     '.rhcloud.com',
 ]
 
@@ -71,10 +71,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-# GETTING-STARTED: change 'learninground' to your project name:
-ROOT_URLCONF = 'learninground.urls'
+# GETTING-STARTED: change 'readitdown' to your project name:
+ROOT_URLCONF = 'readitdown.urls'
 
-WSGI_APPLICATION = 'learninground.wsgi.application'
+WSGI_APPLICATION = 'readitdown.wsgi.application'
 
 
 # Database
@@ -134,8 +134,8 @@ STATICFILES_DIRS = (
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 
-SENTRY_HASH = os.environ['LR_SENTRY_HASH']
-SENTRY_FIVE_DIGIT = os.environ['LR_SENTRY_FIVE_DIGIT']
+SENTRY_HASH = os.environ['RD_SENTRY_HASH']
+SENTRY_FIVE_DIGIT = os.environ['RD_SENTRY_FIVE_DIGIT']
 RAVEN_CONFIG = { 'dsn': 'https://%s@app.getsentry.com/%s' % (SENTRY_HASH, SENTRY_FIVE_DIGIT), }
 
 EMAIL_USE_TLS = True
