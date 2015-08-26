@@ -141,12 +141,12 @@ RAVEN_CONFIG = { 'dsn': 'https://%s@app.getsentry.com/%s' % (SENTRY_HASH, SENTRY
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'learntreadcom'
+EMAIL_HOST_USER = 'readitdown'
 EMAIL_HOST_PASSWORD = 'vols3131'
-DEFAULT_FROM_EMAIL = 'learntreadcom@gmail.com'
+DEFAULT_FROM_EMAIL = 'readitdown@gmail.com'
 
 ACCOUNT_ACTIVATION_DAYS = 250
-REGISTRATION_DEFAULT_FROM_EMAIL = 'learntreadcom@gmail.com'
+REGISTRATION_DEFAULT_FROM_EMAIL = 'readitdown@gmail.com'
 REGISTRATION_AUTO_LOGIN = True
 REGISTRATION_EMAIL_HTML = True
 
