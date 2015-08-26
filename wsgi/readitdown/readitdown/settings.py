@@ -142,7 +142,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'readitdown'
-EMAIL_HOST_PASSWORD = 'vols3131'
+EMAIL_HOST_PASSWORD = 'changethiseventually*3%1'
 DEFAULT_FROM_EMAIL = 'readitdown@gmail.com'
 
 ACCOUNT_ACTIVATION_DAYS = 250
