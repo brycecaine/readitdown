@@ -31,7 +31,7 @@ def create_user(email, first_name=None, last_name=None, group_name=None):
     except IntegrityError:
         print 'user %s exists' % username
         print 5
-        user = None
+        user = User.objects.get(username=username)
 
     return user
 

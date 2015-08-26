@@ -49,6 +49,13 @@ class AddUsersView(FormView):
                 new_user = access_service.create_user(**user_data)
                 
                 if access_service.is_teacher(user):
+                    # Deactivate old teacher friendships
+                    old_teacher_friendships = Friendship.objects.filter(user=new_user, active=True, friend_type='teacher')
+                    for old_teacher_friendship in old_teacher_friendships:
+                        old_teacher_friendship.active = False
+                        old_teacher_friendship.save()
+
+                    # Create the new teacher friendship
                     friendship = main_service.create_friendship(new_user, user, True, 'teacher')
 
                 for guardian_email in row[3:]:
@@ -80,6 +87,13 @@ class AddUsersView(FormView):
                 new_user = access_service.create_user(**user_data)
 
                 if access_service.is_teacher(user):
+                    # Deactivate old teacher friendships
+                    old_teacher_friendships = Friendship.objects.filter(user=new_user, active=True, friend_type='teacher')
+                    for old_teacher_friendship in old_teacher_friendships:
+                        old_teacher_friendship.active = False
+                        old_teacher_friendship.save()
+
+                    # Create the new teacher friendship
                     friendship = main_service.create_friendship(new_user, user, True, 'teacher')
 
                 for cell in row[3:]:
