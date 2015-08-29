@@ -11,6 +11,8 @@
             </div>
             <form action="" method="post">{% csrf_token %}
                 <div class="row">
+                    <div class="col-sm-2">
+                    </div>
                     <div class="col-sm-4">
                         <label>Date</label>
                         {{ form.date }}
@@ -38,10 +40,16 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <div class="col-sm-4" style="white-space: nowrap;">
-                        <label></label><br />
-                        <button class="btn btn-default">Cancel</button>
-                        <input type="submit" value="Submit" class="btn btn-primary">
+                    <div class="col-sm-2">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div class="pull-right">
+                            <input type="submit" value="Submit" class="btn btn-primary">
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
                     </div>
                 </div>
             </form>
