@@ -41,6 +41,7 @@
                             <ul class="dropdown-menu">
                                 {% if user|has_group:"manager" or user|has_group:"teacher" %}
                                     <li><a href="/access/addusers">Add Users</a></li>
+                                    <li><a href="/reading/monitor">Monitor Reading</a></li>
                                 {% endif %}
                                 <li><a href="/accounts/password/change/">Change Password</a></li>
                                 <li><a href="/accounts/logout?next=/">Log Out</a></li>
