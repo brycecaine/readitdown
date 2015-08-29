@@ -2,9 +2,6 @@ from access import service as access_service
 from access.forms import AddUsersForm
 from django.contrib import messages
 from django.views.generic.edit import FormView
-from main import service as main_service
-import csv
-import xlrd
 
 class AddUsersView(FormView):
     template_name = 'access/add_users.html'
@@ -21,95 +18,11 @@ class AddUsersView(FormView):
         context = self.get_context_data()
         user = context.get('user')
 
-        group_to_assign = form.cleaned_data.get('group', 'student')
-        # Only administrators can create teacher accounts
-        if access_service.is_manager(user) and group_to_assign == 'teacher':
-            group_to_assign = 'student'
-
+        group_to_assign = form.cleaned_data.get('role', 'student')
         file = self.request.FILES['file']
-        content_type = self.request.FILES['file'].content_type
 
-        # ---------------------------------------------------------------------
-        # There needs to be some validation here so the right parsing can
-        # happen depending on the file type. But if form validation needs to
-        # happen on the file, try this: http://stackoverflow.com/a/20307970
-
-        # Handle CSVs
-        if content_type == 'text/csv':
-            reader = csv.reader(file)
-            header_row = reader.next()
-            for row in reader:
-                user_data = {
-                    'email': row[0],
-                    'first_name': row[1],
-                    'last_name': row[2],
-                    'group_name': group_to_assign
-                }
-
-                new_user = access_service.create_user(**user_data)
-                
-                if access_service.is_teacher(user):
-                    # Deactivate old teacher friendships
-                    old_teacher_friendships = Friendship.objects.filter(user=new_user, active=True, friend_type='teacher')
-                    for old_teacher_friendship in old_teacher_friendships:
-                        old_teacher_friendship.active = False
-                        old_teacher_friendship.save()
-
-                    # Create the new teacher friendship
-                    friendship = main_service.create_friendship(new_user, user, True, 'teacher')
-
-                for guardian_email in row[3:]:
-                    guardian_data = {
-                        'email': guardian_email,
-                        'group_name': 'guardian'
-                    }
-                    guardian = access_service.create_user(**guardian_data)
-                    friendship = main_service.create_friendship(new_user, guardian, True, 'guardian')
-
-            file.close()
-
-            messages.success(self.request, 'Import successful')
-
-        # Handle Excel files
-        elif content_type in ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'):
-            workbook = xlrd.open_workbook(filename=None, file_contents=file.read())
-            sh = workbook.sheet_by_index(0)
-            for rx in range(sh.nrows)[1:]:
-                row = sh.row(rx)
-                user_data = {
-                    'email': row[0].value,
-                    'first_name': row[1].value,
-                    'last_name': row[2].value,
-                    'group_name': group_to_assign
-                }
-
-                print user_data
-                new_user = access_service.create_user(**user_data)
-
-                if access_service.is_teacher(user):
-                    # Deactivate old teacher friendships
-                    old_teacher_friendships = Friendship.objects.filter(user=new_user, active=True, friend_type='teacher')
-                    for old_teacher_friendship in old_teacher_friendships:
-                        old_teacher_friendship.active = False
-                        old_teacher_friendship.save()
-
-                    # Create the new teacher friendship
-                    friendship = main_service.create_friendship(new_user, user, True, 'teacher')
-
-                for cell in row[3:]:
-                    guardian_email = cell.value
-                    guardian_data = {
-                        'email': guardian_email,
-                        'group_name': 'guardian'
-                    }
-                    print guardian_data
-                    guardian = access_service.create_user(**guardian_data)
-                    friendship = main_service.create_friendship(new_user, guardian, True, 'guardian')
-
-            messages.success(self.request, 'Import successful')
-
-        else:
-            messages.error(self.request, 'Import failed')
+        message = access_service.import_users(file, user, group_to_assign)
+        messages.info(self.request, message)
 
         return super(AddUsersView, self).form_valid(form)
 
