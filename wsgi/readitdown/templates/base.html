@@ -38,6 +38,26 @@
             img.top-margin {
                 margin-top: 70px;
             }
+
+            .navbar-brand-img {
+                float: left;
+                margin-top: 8px;
+                margin-bottom: 8px;
+                margin-left: 15px;
+            }
+
+            .navbar {
+                position: relative;
+            }
+
+            .brand {
+                position: absolute;
+                left: 50%;
+                float: none;
+                margin-top: 8px;
+                margin-left: -50px !important;
+                display: block;
+            }
         </style>
         {% block style %}{% endblock %}
         <!-- -------------------------------------------------------------- -->
@@ -52,7 +72,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Read It Down</a>
+                <a href="/" class="navbar-brand-img"><img src="{{ STATIC_URL }}readitdown_wordmark_small.png"></a>
             </div>
 
             <div class="collapse navbar-collapse navbar-ex1-collapse">
@@ -60,6 +80,12 @@
                     <li><a href="/reading">Reading Tracker</a></li>
                     {% block navbaritems %}{% endblock %}
                 </ul>
+
+                <!--- From http://jsfiddle.net/b7whs/67/ -->
+                <a class="brand" href="http://cvms.ironk12.org" target="_blank">
+                    <img src="{{ STATIC_URL }}cvms_logo.jpg" />
+                </a>
+
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
                         <li class="dropdown">
@@ -78,6 +104,7 @@
                     {% endif %}
                 </ul>
             </div>
+
         </div>
 
         <div class="container-fluid">
