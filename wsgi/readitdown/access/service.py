@@ -2,32 +2,43 @@ from django.contrib.auth.models import User, Group
 from django.contrib.sites.models import Site
 from django.db import IntegrityError
 from main import service as main_service
-from main.models import Friendship
+from main.models import Friendship, Profile
 from readitdown import settings
 from registration.models import RegistrationProfile
 import csv
+import random
+import string
 import xlrd
 
-def create_user(email, first_name=None, last_name=None, group_name=None, **extras):
+def provision_user(email, group_name, school, first_name=None, last_name=None, **extras):
     username = email.split('@')[0]
     
     try:
-        user = User.objects.create_user(username, email)
-        user.first_name = first_name
-        user.last_name = last_name
-        # Figure out why this user.save() is creating an exception
-        user.save()
-
-        group = Group.objects.get(name=group_name) 
-        group.user_set.add(user)
+        new_user = User.objects.create_user(username, email)
+        if first_name:
+            new_user.first_name = first_name
+        if last_name:
+            new_user.last_name = last_name
+        if first_name or last_name:
+            new_user.save()
 
         site = Site.objects.get(id=settings.SITE_ID)
-        RegistrationProfile.objects.create_inactive_user(site=site, new_user=user)
+
+        RegistrationProfile.objects.create_inactive_user(site=site, new_user=new_user)
+        last_six = new_user.registrationprofile.activation_key[-6:]
+        password = '%s%s' % (username, last_six)
+        new_user.set_password(password)
+        new_user.save()
+
+        group = Group.objects.get(name=group_name) 
+        group.user_set.add(new_user)
+
+        profile = Profile.objects.create(user=new_user, school=school)
 
     except IntegrityError:
-        user = User.objects.get(username=username)
+        new_user = User.objects.get(username=username)
 
-    return user
+    return new_user
 
 def is_manager(user):
     return user.groups.filter(name='manager').exists()
@@ -38,16 +49,19 @@ def is_teacher(user):
 def import_users(file, user, group_to_assign):
     message = 'Import failed'
 
+    school = user.profile.school
+
     dict_list = get_dict_list(file)
 
     for file_dict in dict_list:
         file_dict['group_name'] = group_to_assign
-        new_user = create_user(**file_dict)
+        file_dict['school'] = school
+        new_user = provision_user(**file_dict)
 
         for key, value in file_dict.items():
             if 'guardian' in key:
-                guardian_dict = {'email': value, 'group_name': 'guardian'}
-                guardian = create_user(**guardian_dict)
+                guardian_dict = {'email': value, 'group_name': 'guardian', 'school': school}
+                guardian = provision_user(**guardian_dict)
                 main_service.create_friendship(new_user, guardian, True, 'guardian')
 
         if is_teacher(user):

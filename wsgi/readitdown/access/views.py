@@ -11,6 +11,7 @@ class AddUsersView(FormView):
     def get_context_data(self, **kwargs):
         context = super(AddUsersView, self).get_context_data(**kwargs)
         context['user'] = self.request.user
+        context['is_manager'] = access_service.is_manager(self.request.user)
 
         return context
 

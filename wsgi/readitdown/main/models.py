@@ -9,3 +9,12 @@ class Friendship(models.Model):
 
     def __unicode__(self):
         return '%s & %s - %s, %s' % (self.user, self.friend, self.friend_type, self.active)
+
+class School(models.Model):
+    name = models.CharField(max_length=255)
+    url = models.URLField(max_length=800)
+    image_file = models.CharField(max_length=255)
+
+class Profile(models.Model):
+    user = models.OneToOneField(User)
+    school = models.ForeignKey(School)

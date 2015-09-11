@@ -82,9 +82,11 @@
                 </ul>
 
                 <!--- From http://jsfiddle.net/b7whs/67/ -->
-                <a class="brand" href="http://cvms.ironk12.org" target="_blank">
-                    <img src="{{ STATIC_URL }}cvms_logo.jpg" />
-                </a>
+                {% if user.profile.school %}
+                    <a class="brand" href="{{ user.profile.school.url }}" target="_blank">
+                        <img src="{{ STATIC_URL }}{{ user.profile.school.image_file }}" />
+                    </a>
+                {% endif %}
 
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
@@ -111,11 +113,9 @@
             <div class="row">
                 <div class="col-lg-12">
                     {% if messages %}
-                        <ul class="messages">
-                            {% for message in messages %}
-                                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                            {% endfor %}
-                        </ul>
+                        {% for message in messages %}
+                            <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+                        {% endfor %}
                     {% endif %}
                 </div>
             </div>

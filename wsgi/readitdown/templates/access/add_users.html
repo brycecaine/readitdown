@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <h2 class="text-center">Add Users</h2>
     <div class="container">
-        <p class="lead text-center">Add Users</p>
+        <p class="lead text-center">Here's where you can add user accounts that will be associated with your school.</p>
+            <div class="alert alert-warning">
+                <strong>Alert:</strong> Submitting this form will send account activation emails to the people listed in the spreadsheet you upload. This is all part of the process, but it's best for you to know beforehand.
+            </div>
             <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
                 <div class="row">
                     <div class="col-lg-6">
@@ -37,8 +41,28 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="alert alert-info">
-                            <strong>Hint:</strong> The spreadsheet needs to have the below headers exactly as shown. Hightlight the header row and paste into a spreadsheet to help you get started.
+                            <strong>Hint:</strong> The spreadsheet needs to have the below headers exactly as shown. Hightlight the header row and paste into a spreadsheet to help you get started. (Guardian email fields are optional.)
                         </div>
+                        {% if is_manager %}
+                            <h3>Teacher file example</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>email</th>
+                                        <th>first_name</th>
+                                        <th>last_name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>teacher@example.com</td>
+                                        <td>First</td>
+                                        <td>Last</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        {% endif %}
+                        <h3>Student file example</h3>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
