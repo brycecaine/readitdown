@@ -8,15 +8,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <link rel="icon" type="image/png" href="{{ STATIC_URL }}img/design/favicon.ico">
+        <link rel="icon" type="image/png" href="{{ STATIC_URL }}favicon.ico">
 
         <!-- Styling ------------------------------------------------------ -->
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
         <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
         <link href="http://getbootstrap.com/examples/sticky-footer/sticky-footer.css" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Lato:300,700' rel='stylesheet' type='text/css'>
         <style>
             .padded {
                 padding: 15px;
+            }
+
+            p, a, text, button, label, input, td {
+                font-family: 'Lato', sans-serif;
+            }
+
+            strong {
+                font-family: 'Lato', sans-serif;
+                font-weight: bold;
+            }
+
+            img.center {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            img.top-margin {
+                margin-top: 70px;
             }
         </style>
         {% block style %}{% endblock %}
@@ -24,8 +44,14 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar navbar-default" role="navigation">
             <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
                 <a class="navbar-brand" href="/">Read It Down</a>
             </div>
 
@@ -52,7 +78,7 @@
                     {% endif %}
                 </ul>
             </div>
-        </nav>
+        </div>
 
         <div class="container-fluid">
             <div class="row">

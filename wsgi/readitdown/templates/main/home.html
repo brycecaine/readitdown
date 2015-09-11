@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <p class="text-center splash">Welcome to Read It Down!</p>
+    <div>
+        <img src="{{ STATIC_URL }}readitdown_wordmark.png" width="80%" class="center top-margin">
+    </div>
     <div>
         <p class="lead text-center subsplash">
-            Read a book, then write it down... Read It Down<br />
+            Read a book, then write it down<br />
             <br />
-            <a href="/reading" class="btn btn-primary btn-xlarge">Track Your Minutes</a>
+            <a href="/reading" class="btn btn-primary btn-xlarge">Give it a spin</a>
             {% if not user.is_authenticated %}
                 <br />
                 <br />
