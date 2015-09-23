@@ -1,7 +1,10 @@
 from access import service as access_service
 from access.forms import AddUsersForm
 from django.contrib import messages
+from django.http import HttpResponse
+from django.views.generic.base import View
 from django.views.generic.edit import FormView
+import csv
 
 class AddUsersView(FormView):
     template_name = 'access/add_users.html'
@@ -33,3 +36,23 @@ class AddUsersView(FormView):
 
         return kwargs
 
+class UserTemplateView(View):
+    def get(self, request, *args, **kwargs):
+        kind = self.kwargs.get('kind', 'student')
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="%s_template.csv"' % kind
+
+        writer = csv.writer(response)
+        
+        if kind == 'teacher':
+            columns = ['email', 'first_name', 'last_name']
+            data = ['teacher@example.com', 'First', 'Last']
+        else:
+            columns = ['email', 'first_name', 'last_name', 'guardian_email_1', 'guardian_email_2']
+            data = ['student@example.com', 'First', 'Last', 'guard1@example.com', 'guard2@example.com']
+
+        writer.writerow(columns)
+        writer.writerow(data)
+
+        return response

@@ -5,6 +5,7 @@ from access import views
 urlpatterns = patterns('',
     url(r'^addusers/?$', require_groups('manager', 'teacher')
         (views.AddUsersView.as_view()), name='addusers'),
+    url(r'^template/(?P<kind>\w+)/?$', views.UserTemplateView.as_view(), name='template'),
 )
 
 
