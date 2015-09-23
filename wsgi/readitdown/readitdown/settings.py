@@ -141,14 +141,14 @@ SENTRY_FIVE_DIGIT = os.environ['RD_SENTRY_FIVE_DIGIT']
 RAVEN_CONFIG = { 'dsn': 'https://%s@app.getsentry.com/%s' % (SENTRY_HASH, SENTRY_FIVE_DIGIT), }
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'mail.privateemail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'learntreadcom'
-EMAIL_HOST_PASSWORD = 'vols3131'
-DEFAULT_FROM_EMAIL = 'hello@readitdown.com'
+EMAIL_HOST_USER = 'admin@readitdown.com'
+EMAIL_HOST_PASSWORD = os.environ['RD_EMAIL_PW']
+DEFAULT_FROM_EMAIL = 'admin@readitdown.com'
 
 ACCOUNT_ACTIVATION_DAYS = 30
-REGISTRATION_DEFAULT_FROM_EMAIL = 'accounts@readitdown.com'
+REGISTRATION_DEFAULT_FROM_EMAIL = 'admin@readitdown.com'
 REGISTRATION_AUTO_LOGIN = False
 REGISTRATION_EMAIL_HTML = True
 
