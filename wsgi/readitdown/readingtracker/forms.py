@@ -23,6 +23,6 @@ class EntryForm(forms.Form):
             raise forms.ValidationError('Too long ago')
 
         if data > today:
-            raise forms.ValidationError('Future')
+            raise forms.ValidationError('Can\'t track minutes in the future')
 
         return data
